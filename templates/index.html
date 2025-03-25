@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arduino Control</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Arduino LED & LDR Control</h1>
+    
+    <h2>PWM LEDs</h2>
+    <div>
+        <label>LED 9: <input type="range" min="0" max="255" id="L1"></label>
+        <span id="L1_val">0</span>
+    </div>
+    <div>
+        <label>LED 10: <input type="range" min="0" max="255" id="L2"></label>
+        <span id="L2_val">0</span>
+    </div>
+    <div>
+        <label>LED 11: <input type="range" min="0" max="255" id="L3"></label>
+        <span id="L3_val">0</span>
+    </div>
+
+    <h2>Digital LED 13</h2>
+    <button id="D13_toggle">Toggle</button>
+    <span>State: <span id="D13_state">OFF</span></span>
+
+    <h2>LDR (A3)</h2>
+    <div>Value: <span id="A3_val">0</span></div>
+
+    <script>
+        function updateDisplay(data) {
+            // Update PWM LEDs
+            $('#L1').val(data.L1);
+            $('#L1_val').text(data.L1);
+            $('#L2').val(data.L2);
+            $('#L2_val').text(data.L2);
+            $('#L3').val(data.L3);
+            $('#L3_val').text(data.L3);
+            
+            // Update Digital LED
+            $('#D13_state').text(data.D13 ? 'ON' : 'OFF');
+            
+            // Update LDR
+            $('#A3_val').text(data.A3);
+        }
+
+        // Fetch data every second
+        setInterval(() => {
+            $.get('/data', updateDisplay);
+        }, 1000);
+
+        // PWM Slider Events
+        $('input[type="range"]').on('input', function() {
+            const key = $(this).attr('id');
+            const value = $(this).val();
+            $.post('/control', JSON.stringify({ key, value }));
+        });
+
+        // Toggle Button Event
+        $('#D13_toggle').click(() => {
+            const current = $('#D13_state').text() === 'ON';
+            $.post('/control', JSON.stringify({ key: 'D13', value: !current ? 1 : 0 }));
+        });
+    </script>
+</body>
+</html>
