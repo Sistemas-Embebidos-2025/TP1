@@ -45,6 +45,9 @@ Thread(target=serial_reader, daemon=True).start()
 
 @app.route('/')
 def index():
+    """
+    Renders the main page of the web application.
+    """
     return render_template('index.html')
 
 @app.route('/data')
