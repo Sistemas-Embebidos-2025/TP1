@@ -57,6 +57,7 @@ def index():
     """
     return render_template('index.html')
 
+
 @socketio.on("control_led")
 def set_control(data):
     """

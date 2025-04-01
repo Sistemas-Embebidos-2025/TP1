@@ -109,8 +109,13 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .card {
+	margin-bottom: 20px;
 	background: white;
 	padding: 20px;
 	border-radius: 8px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card:last-child {
+	margin-bottom: 0;  /* Remove margin from last card */
 }
