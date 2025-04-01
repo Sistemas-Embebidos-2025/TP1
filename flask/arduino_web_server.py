@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 import serial
 from threading import Thread, Lock
 import time
 
 app = Flask(__name__)
+CORS(app)
 ser = serial.Serial('COM4', 9600, timeout=1)  # Opens the serial port COM3 (WINDOWS) with a baud rate of 9600.
 lock = Lock()
 
@@ -18,6 +20,7 @@ current_data = {
     # A3: Analog pin A3 value (sensor reading).
     'A3': 0
 }
+
 
 def serial_reader():
     """
@@ -40,8 +43,10 @@ def serial_reader():
             print("Serial read error:", e)
         time.sleep(0.1)
 
+
 # Starts serial_reader() in a separate background thread (daemon=True makes it stop when the program exits).
 Thread(target=serial_reader, daemon=True).start()
+
 
 @app.route('/')
 def index():
@@ -50,6 +55,7 @@ def index():
     """
     return render_template('index.html')
 
+
 @app.route('/data')
 def get_data():
     """
@@ -57,13 +63,14 @@ def get_data():
     """
     return jsonify(current_data)
 
+
 @app.route('/control', methods=['POST'])
 def set_control():
     """
     Accepts POST requests to set the state of LEDs or digital pin 13.
     Expects JSON payload: {"key": "L1", "value": 1}
     """
-    req = request.get_json()
+    req = request.get_json(force=True)
     key = req.get('key')
     value = req.get('value')
     if key in ['L1', 'L2', 'L3', 'D13']:
@@ -77,6 +84,7 @@ def set_control():
             ser.write(f"{key}:{int(value)}\n".encode())
         return jsonify(success=True)
     return jsonify(success=False), 400
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
