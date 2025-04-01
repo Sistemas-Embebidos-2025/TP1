@@ -1,3 +1,5 @@
+const socket = io();  // Connect to the web socket  "http://" + location.hostname + ":" + location.port
+
 function updateDisplay(data) {
 	// Update PWM LEDs
 	$('#L1').val(data.L1);
@@ -14,20 +16,22 @@ function updateDisplay(data) {
 	$('#A3_val').text(data.A3);
 }
 
-// Fetch data every second
-setInterval(() => {
-	$.get('/data', updateDisplay);
-}, 1000);
+// Update the display when new data is received
+socket.on('update_data', function(data) {
+    updateDisplay(data);
+});
 
 // PWM Slider Events
 $('input[type="range"]').on('input', function () {
 	const key = $(this).attr('id');
 	const value = $(this).val();
-	$.post('/control', JSON.stringify({key, value}));
+	socket.emit("control_led", {key, value});
 });
 
 // Toggle Button Event
 $('#D13_toggle').click(() => {
 	const current = $('#D13_state').text() === 'ON';
-	$.post('/control', JSON.stringify({key: 'D13', value: !current ? 1 : 0}), null, 'json');
+	const key = 'D13';
+	const value= !current ? 1 : 0;
+	socket.emit("control_led", {key, value});
 });

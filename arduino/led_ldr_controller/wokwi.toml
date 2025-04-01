@@ -1,8 +1,0 @@
-[wokwi]
-version=1
-board = "arduino-uno"
-firmware = "build/led_ldr_controller.hex"
-elf = "build/led_ldr_controller.elf"
-
-[dependencies]
-FreeRTOS = "*"

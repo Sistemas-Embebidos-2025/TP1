@@ -18,7 +18,7 @@ void loop() {
   int a3 = analogRead(A3);
 
   // Check if there are any serial commands available
-  if (Serial.available()) {
+  if (Serial.available() > 0) {
     // Read the incoming serial command until a newline character is encountered
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();  // Remove any leading or trailing whitespace
@@ -54,6 +54,6 @@ void loop() {
   Serial.print(";A3:"); Serial.print(a3);
   Serial.println(";");
   
-  // Delay for 200 milliseconds before the next loop iteration
-  delay(200);
+  // Delay for 500 milliseconds before the next loop iteration
+  delay(500);
 }
