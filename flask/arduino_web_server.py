@@ -4,7 +4,7 @@ from threading import Thread, Lock
 import time
 
 app = Flask(__name__)
-ser = serial.Serial('COM1', 9600, timeout=1)  # Opens the serial port COM3 (WINDOWS) with a baud rate of 9600.
+ser = serial.Serial('COM4', 9600, timeout=1)  # Opens the serial port COM3 (WINDOWS) with a baud rate of 9600.
 lock = Lock()
 
 # This dictionary stores the latest values received from the Arduino.
@@ -45,6 +45,9 @@ Thread(target=serial_reader, daemon=True).start()
 
 @app.route('/')
 def index():
+    """
+    Renders the main page of the web application.
+    """
     return render_template('index.html')
 
 @app.route('/data')
